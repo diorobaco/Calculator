@@ -29,6 +29,7 @@ class ViewController: UIViewController {
             } else {
                 userIsInTheMiddleOfTypingANumber = true
                 display.text = digit
+                history.text = brain.showTrack()
             }
         }
     }
@@ -40,6 +41,7 @@ class ViewController: UIViewController {
         if let operation = sender.currentTitle {
             if let result = brain.performOperation(operation) {
                 displayValue = result
+                history.text = brain.showTrack()! + " ="
             } else {
                 displayValue = 0
             }
@@ -48,10 +50,21 @@ class ViewController: UIViewController {
 
     }
     
+    @IBAction func backSpace(sender: AnyObject) {
+        if userIsInTheMiddleOfTypingANumber {
+            let displayText = display.text!
+            if count(displayText) > 1 {
+                display.text = dropLast(displayText)
+            } else {
+                display.text = "0"
+            }
+        }
+    }
 
     @IBAction func clear(sender: AnyObject) {
         brain = CalculatorBrain()
         displayValue = 0
+        history.text = "History"
     }
 
     
@@ -67,14 +80,17 @@ class ViewController: UIViewController {
     var displayValue: Double {
         get {
             return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
-            
         }
         set {
             display.text = "\(newValue)"
             userIsInTheMiddleOfTypingANumber = false
+//            if let stack = brain.showTrack() {
+//                if !stack.isEmpty {
+//                    history.text = stack
+//                }
+//            }
             history.text = brain.showTrack()
         }
     }
 
 }
-
